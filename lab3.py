@@ -1,7 +1,12 @@
+#skonczone 
+def realloc(tab, size):
+    oldSize = len(tab)
+    return [tab[i] if i<oldSize else None  for i in range(size)]
+
 class Queue:
-    def __init__(self):
-        self.array = [None for i in range(5)]
-        self.size = self.length()
+    def __init__(self, size = 5):
+        self.array = [None for i in range(size)]
+        self.size = size
         self.zid = 0
         self.oid = 0
 
@@ -24,23 +29,36 @@ class Queue:
         if self.size == 0:
             return None
         else:
-            self.array[self.oid] = None
-            self.oid += 1
-            return self.array[self.oid]
+            val = self.array[self.oid]
+            self.oid = (self.oid + 1) % self.size
+            return val
         
     def enqueue(self, val):
         self.array[self.zid] = val
-        self.zid += 1
-        #if self.oid == self.zid:
-        #    self.realloc()
+        self.zid = (self.zid + 1) % self.size
+        
+        if self.zid == self.oid:
+            self.array = realloc(self.array, 2 * self.size)
+            old = self.size
+            self.size = 2 * self.size
+            new = self.size
+            for i in range(self.oid, old):
+                self.array[new- 1] = self.array[old - i]
+                new -= 1
+            self.oid = new
 
-    def realloc(self, id):
-        new_tab = [None for i in range(2*self.size)]
-        new_tab[]
-        self.array = new_tab
+    def print_ar(self):
+        result = "[" + " ".join(str(self.array[i]) for i in range(self.size)) + "]"
+        return result
     
     def __str__(self):
-        return f"[{self.array}]"
+        result = "["
+        if self.zid >= self.oid:
+            result += ' '.join(map(str, self.array[self.oid:self.zid]))
+        else:
+            result += ' '.join(map(str, self.array[self.oid:] + self.array[:self.zid]))
+        result += "]"
+        return result
 
 
 def main():
@@ -49,8 +67,18 @@ def main():
     for i in range(1,5):
         kolejka.enqueue(i)
 
+    print(kolejka.dequeue())
+    print(kolejka.peek())
     print(kolejka)
-    kolejka.dequeue()
+    for i in range(5,9):
+        kolejka.enqueue(i)
+    print(kolejka.print_ar())
+
+    while not kolejka.is_empty():
+        print(kolejka.dequeue())
+
+
+    print(kolejka)
 
 if __name__ == "__main__":
     main()

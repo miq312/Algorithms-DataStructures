@@ -3,48 +3,62 @@ class Element:
       def __init__(self, data):
            self.data = data
            self.next = None
+           self.prev = None
       def __str__(self):
         return str(self.data)
       
 class LinkedList:
     def __init__(self):
             self.head = None
+            self.tail = None
 
     def destroy(self):
           self.head = None
+          self.tail = None
 
     def add(self, other: Element):
+        app = Element(other)
+        app.next = self.head
         if self.head == None:
-            self.head = other
+            self.head = app
+            self.tail = app
+            app.prev = None
         else:
-            other.next = self.head
-            self.head = other
+            app.next = self.head
+            self.head = app
+            self.head.prev = app 
+            app.prev = None
     
     def append(self, other: Element):
         app = Element(other)
         if self.head == None:
             self.head = app
+            self.tail = app
         else:
-            current = self.head
-            while current.next != None:
-                current = current.next
-            current.next = app
+            self.tail.next = other
+            other.prev = self.tail
+            self.tail = other
 
     def remove(self):
-          if self.is_empty():
-               self.destroy()
-               print("REMOVE::Lista jest pusta")
-          else:
-               self.head = self.head.next
-          
-    def remove_end(self):
-        if self.head != None and self.length() > 1:
-            current = self.head
-            while current.next.next != None:
-                current = current.next
-            current.next = None
+        if self.is_empty():
+            print("REMOVE::Lista jest pusta")
         else:
-            self.head = None
+            if self.head == self.tail:
+                self.destroy()
+            else:
+                self.head = self.head.next
+                if self.head:
+                    self.head.prev = None
+
+    def remove_end(self):
+        if self.is_empty():
+            print("REMOVE_END::Lista jest pusta")
+        else:
+            if self.head == self.tail:
+                self.destroy()
+            else:
+                self.tail = self.tail.prev
+                self.tail.next = None
     
     def is_empty(self) -> bool:
           if self.head == None:
@@ -97,7 +111,7 @@ def main():
     print(uczelnie)
     print(uczelnie.length())
     uczelnie.remove()
-    print(uczelnie.get(), "\n")
+    print(uczelnie.get(), '\n')
     uczelnie.remove_end()
     print(uczelnie)
     uczelnie.destroy() 
