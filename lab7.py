@@ -1,5 +1,7 @@
 import random
 import time
+from copy import deepcopy
+from typing import List
 
 class Element:
     def __init__(self, priorytet, data):
@@ -105,7 +107,6 @@ class Heap:
             self.print_tree(self.left(idx), lvl + 1)
 
 def firstTest():
-    list =  [(5,'A'), (5,'B'), (7,'C'), (2,'D'), (5,'E'), (1,'F'), (7,'G'), (5,'H'), (1,'I'), (2,'J')]
     elem = [ Element(key, value) for key,value in  [(5,'A'), (5,'B'), (7,'C'), (2,'D'), (5,'E'), (1,'F'), (7,'G'), (5,'H'), (1,'I'), (2,'J')]]
     h = Heap(elem)
     h.createHeap()
@@ -113,7 +114,6 @@ def firstTest():
     h.print_tree(0,0)
     h.heapsort()
     h.print_tab()
-    h.print_tree(0,0)
 
 def secondTest():
     randomNumbers = [int(random.random()*100) for i in range(1000)]
@@ -123,16 +123,54 @@ def secondTest():
     h.createHeap()
     h.heapsort()
     t_stop = time.perf_counter()
-    h.print_tab()
-    print("Czas obliczeń:", "{:.7f}".format(t_stop - t_start))
+    print("Czas obliczeń: kopcowanie: ", "{:.7f}".format(t_stop - t_start))
 
-def swap(size):
-    return size
+def swap(tab):
+    for i in range(len(tab)):
+        k = tab[i]
+        kId = i
+        for  j in range(i, len(tab)):
+            if k > tab[j]:
+                kId = j
+                k = tab[j]
+        tab[i], tab[kId] = tab[kId], tab[i]
+    return tab
+
+def shift(tab):
+    for i in range(len(tab)):
+        k = tab[i]
+        kId = i
+        for j in range(i+1, len(tab)):
+            if k > tab[j]:
+                kId = j
+                k = tab[j]
+        elem = tab.pop(kId)
+        tab.insert(i, elem)
+    return tab
 
 def main():
     firstTest()
     secondTest()
+    
+    elem = [ Element(key, value) for key,value in  [(5,'A'), (5,'B'), (7,'C'), (2,'D'), (5,'E'), (1,'F'), (7,'G'), (5,'H'), (1,'I'), (2,'J')]]
+    elem2 = deepcopy(elem)
 
+    print(shift(elem))
+    print(swap(elem2))
+
+    l = [int(random.random() * 100) for _ in range(10000)]
+    t_start1 = time.perf_counter()
+    shift(l)
+    t_stop1= time.perf_counter()
+    print("Czas obliczeń:przesunięcie elementów (shift):",
+          "{:.7f}".format(t_stop1 - t_start1))
+
+    l = [int(random.random() * 100) for _ in range(10000)]
+    t_start2 = time.perf_counter()
+    swap(l)
+    t_stop2 = time.perf_counter()
+    print("Czas obliczeń: zamiania miejscami (swap):",
+          "{:.7f}".format(t_stop2 - t_start2))
 
 if __name__ == '__main__':
     main()
